@@ -100,7 +100,8 @@ public:
             for (int j = 0; j < this->nbCol; j++)
             {
                 outfile << to_string(this->mat[i][j]) + " ";
-                        }
+                
+            }
         }
         outfile.close();
     }

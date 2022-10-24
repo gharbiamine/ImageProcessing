@@ -61,3 +61,15 @@ class Pgm:
         for i in range(1, 256):
             cumHist.append(cumHist[i-1] + hist[i])
         return np.array(cumHist)
+    
+    def getCumProb(self,hist):
+        return np.add.accumulate(hist) / (self.lx * self.ly)
+
+    def getEqualizedHist(self,probCum, hist): 
+        n1 = np.floor(255*probCum).astype(int)
+        j=0
+        result = np.zeros((256,))
+        for el in n1:
+            result[el]+=hist[j]
+            j+=1
+        return result.astype(int)
