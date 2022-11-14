@@ -38,8 +38,8 @@ class Pgm:
                 for j in range(self.lx):
                     f.write(str(self.mat[i][j]) + ' ')
                 f.write('\n')
-    def show(self):
-        plt.imshow(self.mat, cmap='gray')
+    def show(self,mat):
+        plt.imshow(mat, cmap='gray')
         plt.show()
 
     def grayValue(self):
@@ -73,3 +73,49 @@ class Pgm:
             result[el]+=hist[j]
             j+=1
         return result.astype(int)
+    
+    def addNoise(self): 
+        noise = np.random.randint(21,size=(self.ly,self.lx))
+        tempMat = np.copy(self.mat)
+        for i in range (self.ly):
+            for j in range (self.lx):
+                if noise[i][j] == 0:
+                    tempMat[i][j] = 0
+                elif noise[i][j] == 20:
+                    tempMat[i][j] = 255
+        return tempMat           
+    def avgFilter(self,noiseMat,n):
+        tempMat = np.copy(self.mat)
+        for i in range (self.ly):
+            for j in range (self.lx):
+                if i < n or j < n or i > self.ly-n-1 or j > self.lx-n-1:
+                    continue
+                else:
+                    tempMat[i][j] = np.average(noiseMat[i-n//2:i+n//2+1,j-n//2:j+n//2+1])
+        return tempMat
+
+    def medianFilter(self,noiseMat,n):
+        tempMat = np.copy(self.mat)
+        for i in range (self.ly):
+            for j in range (self.lx):
+                if i < n or j < n or i > self.ly-n-1 or j > self.lx-n-1:
+                    continue
+                else:
+                    tempMat[i][j] = np.median(noiseMat[i-n//2:i+n//2+1,j-n//2:j+n//2+1])
+        return tempMat      
+    def highPassingFilter(self,n):
+        tempMat = np.copy(self.mat)
+        for i in range (self.ly):
+            for j in range (self.lx):
+                if i < n or j < n or i > self.ly-n-1 or j > self.lx-n-1:
+                    continue
+                else:
+                    tempMat[i][j] = np.average(self.mat[i-n//2:i+n//2+1,j-n//2:j+n//2+1])- self.mat[i][j]
+                    
+        return tempMat             
+    def getSNR(self,noiseMat,filteredMat):
+        return np.sqrt(np.sum((self.mat-self.grayValue())**2)/np.sum((filteredMat-noiseMat)**2))
+        
+                    
+
+
